@@ -1,0 +1,23 @@
+{
+  "name": "markwilson/wp-composer-plugin",
+  "type": "composer-plugin",
+  "license": "MIT",
+  "authors": [{
+    "name": "Mark Wilson",
+    "email": "mark@89allport.co.uk"
+  }],
+  "autoload": {
+    "psr-4": {
+      "MarkWilson\\Composer\\": "src/"
+    }
+  },
+  "extra": {
+    "class": "MarkWilson\\Composer\\WordpressPlugin"
+  },
+  "require": {
+    "composer-plugin-api": "1.0.0",
+    "wordpress": "*",
+    "fancyguy/webroot-installer" : "1.0.0",
+    "symfony/filesystem": "2.6.x"
+  }
+}
