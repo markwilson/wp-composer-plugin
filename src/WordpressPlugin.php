@@ -153,7 +153,7 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
      */
     private function copyAssets($webroot, $devMode = false)
     {
-        $this->copyFrom($webroot, $devMode, 'content');
+        $this->copyFrom($webroot, $devMode, 'assets');
 
         return $this;
     }
