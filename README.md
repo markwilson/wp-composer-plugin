@@ -7,7 +7,7 @@ To be used with `markwilson/wp-template`.
 ```
 {
    "require": {
-     "markwilson/wp-composer-plugin": "1.x"
-  }
+      "markwilson/wp-composer-plugin": "1.x"
+   }
 }
 ```
