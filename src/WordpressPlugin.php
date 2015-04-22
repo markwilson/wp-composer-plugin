@@ -191,7 +191,11 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
         if ($devMode) {
             $filesystem->symlink($from, $to, true);
         } else {
-            $filesystem->copy($from, $to);
+            if (!is_file($from)) {
+                $filesystem->mirror($from, $to);
+            } else {
+                $filesystem->copy($from, $to);
+            }
         }
 
         if ($this->io->isVerbose()) {
