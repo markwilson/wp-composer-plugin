@@ -84,21 +84,10 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
     public function initialiseWordpress(Event $event)
     {
         $webroot = $this->getWebroot();
-        $devMode = $this->isDevMode();
 
-        $this->copyIndex($webroot, $devMode);
-        $this->copyContent($webroot, $devMode);
-        $this->copyAssets($webroot, $devMode);
-    }
-
-    /**
-     * Are we in dev mode?
-     *
-     * @return boolean
-     */
-    private function isDevMode()
-    {
-        return $this->package->isDev();
+        $this->copyIndex($webroot);
+        $this->copyContent($webroot);
+        $this->copyAssets($webroot);
     }
 
     /**
@@ -116,14 +105,13 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Copy the index script
      *
-     * @param string  $webroot Webroot
-     * @param boolean $devMode Dev mode
+     * @param string $webroot Webroot
      *
      * @return $this
      */
-    private function copyIndex($webroot, $devMode = false)
+    private function copyIndex($webroot)
     {
-        $this->copyFrom($webroot, $devMode, 'index.php');
+        $this->copyFrom($webroot, 'index.php');
 
         return $this;
     }
@@ -131,14 +119,13 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Copy content folder
      *
-     * @param string  $webroot Webroot
-     * @param boolean $devMode Dev mode
+     * @param string $webroot Webroot
      *
      * @return $this
      */
-    private function copyContent($webroot, $devMode = false)
+    private function copyContent($webroot)
     {
-        $this->copyFrom($webroot, $devMode, 'content');
+        $this->copyFrom($webroot, 'content');
 
         return $this;
     }
@@ -146,14 +133,13 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Copy assets folder
      *
-     * @param string  $webroot Webroot
-     * @param boolean $devMode Dev mode
+     * @param string $webroot Webroot
      *
      * @return $this
      */
-    private function copyAssets($webroot, $devMode = false)
+    private function copyAssets($webroot)
     {
-        $this->copyFrom($webroot, $devMode, 'assets');
+        $this->copyFrom($webroot, 'assets');
 
         return $this;
     }
@@ -171,13 +157,12 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Copy from specified file/folder
      *
-     * @param string  $webroot Webroot
-     * @param boolean $devMode Dev mode
-     * @param string  $path    Path
+     * @param string $webroot Webroot
+     * @param string $path    Path
      *
      * @return $this
      */
-    private function copyFrom($webroot, $devMode, $path)
+    private function copyFrom($webroot, $path)
     {
         $from = $this->projectRoot . DIRECTORY_SEPARATOR . $path;
         $to = $this->projectRoot . DIRECTORY_SEPARATOR . $webroot . DIRECTORY_SEPARATOR . $path;
@@ -188,15 +173,7 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
             $filesystem->remove($to);
         }
 
-        if ($devMode) {
-            $filesystem->symlink($from, $to, true);
-        } else {
-            if (!is_file($from)) {
-                $filesystem->mirror($from, $to);
-            } else {
-                $filesystem->copy($from, $to);
-            }
-        }
+        $filesystem->symlink($from, $to, true);
 
         if ($this->io->isVerbose()) {
             $this->io->write(sprintf('Moved %s to %s', $from, $to));
