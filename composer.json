@@ -1,7 +1,7 @@
 {
   "name": "markwilson/wp-composer-plugin",
   "type": "composer-plugin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "authors": [{
     "name": "Mark Wilson",
