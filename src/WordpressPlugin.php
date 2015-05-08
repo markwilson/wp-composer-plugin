@@ -54,7 +54,7 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
         $this->io = $io;
 
         // TODO: get the project root - must be a better way to do this
-        $this->projectRoot = dirname($composer->getConfig()->get('vendor-dir'));
+        $this->projectRoot = realpath(dirname($composer->getConfig()->get('vendor-dir')));
     }
 
     /**
