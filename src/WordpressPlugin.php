@@ -85,9 +85,27 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
     {
         $webroot = $this->getWebroot();
 
-        $this->copyIndex($webroot);
-        $this->copyContent($webroot);
-        $this->copyAssets($webroot);
+        $defaultSettings = array(
+            'copy-paths' => array()
+        );
+
+        $extraConfig = $this->package->getExtra();
+
+        if (!isset($extraConfig['wordpress'])) {
+            $extraConfig['wordpress'] = array();
+        }
+
+        $settings = array_merge($defaultSettings, $extraConfig['wordpress']);
+
+        foreach ($settings['copy-paths'] as $path) {
+            if (is_string($path)) {
+                $this->copyFrom($webroot, $path);
+            } elseif (is_array($path) && count($path) === 2 && is_string($path[0]) && is_string($path[1])) {
+                $this->copyFrom($webroot, $path[0], $path[1]);
+            } else {
+                throw new \RuntimeException('Unrecognised path format. Must be source path or array of source and destination paths');
+            }
+        }
     }
 
     /**
@@ -103,69 +121,22 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * Copy the index script
-     *
-     * @param string $webroot Webroot
-     *
-     * @return $this
-     */
-    private function copyIndex($webroot)
-    {
-        $this->copyFrom($webroot, 'index.php');
-
-        return $this;
-    }
-
-    /**
-     * Copy content folder
-     *
-     * @param string $webroot Webroot
-     *
-     * @return $this
-     */
-    private function copyContent($webroot)
-    {
-        $this->copyFrom($webroot, 'content');
-
-        return $this;
-    }
-
-    /**
-     * Copy assets folder
-     *
-     * @param string $webroot Webroot
-     *
-     * @return $this
-     */
-    private function copyAssets($webroot)
-    {
-        $this->copyFrom($webroot, 'assets');
-
-        return $this;
-    }
-
-    /**
-     * Get filesystem
-     *
-     * @return Filesystem
-     */
-    private function getFilesystem()
-    {
-        return new Filesystem();
-    }
-
-    /**
      * Copy from specified file/folder
      *
-     * @param string $webroot Webroot
-     * @param string $path    Path
+     * @param string $webroot     Webroot
+     * @param string $path        Path
+     * @param string $destination Destination (optional)
      *
      * @return $this
      */
-    private function copyFrom($webroot, $path)
+    private function copyFrom($webroot, $path, $destination = null)
     {
+        if (null === $destination) {
+            $destination = $path;
+        }
+
         $from = $this->projectRoot . DIRECTORY_SEPARATOR . $path;
-        $to = $this->projectRoot . DIRECTORY_SEPARATOR . $webroot . DIRECTORY_SEPARATOR . $path;
+        $to = $this->projectRoot . DIRECTORY_SEPARATOR . $webroot . DIRECTORY_SEPARATOR . $destination;
 
         $filesystem = $this->getFilesystem();
 
@@ -178,5 +149,15 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
         if ($this->io->isVerbose()) {
             $this->io->write(sprintf('Moved %s to %s', $from, $to));
         }
+    }
+
+    /**
+     * Get filesystem
+     *
+     * @return Filesystem
+     */
+    private function getFilesystem()
+    {
+        return new Filesystem();
     }
 }
