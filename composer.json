@@ -16,7 +16,7 @@
     "class": "MarkWilson\\Composer\\WordpressPlugin"
   },
   "require": {
-    "composer-plugin-api": "1.0.0",
+    "composer-plugin-api": "^1.0",
     "wordpress": "*",
     "fancyguy/webroot-installer" : "1.0.0",
     "symfony/filesystem": "2.6.x"
