@@ -133,9 +133,13 @@ class WordpressPlugin implements PluginInterface, EventSubscriberInterface
     {
         if (null === $destination) {
             $destination = $path;
+            $from = $this->projectRoot . DIRECTORY_SEPARATOR . $path;
+        } else {
+            // if the destination was defined then we assume the path is either absolute or relative to the webroot
+            // because it has been defined by the user in the extra mapping
+            $from = $path;
         }
 
-        $from = $this->projectRoot . DIRECTORY_SEPARATOR . $path;
         $to = $this->projectRoot . DIRECTORY_SEPARATOR . $webroot . DIRECTORY_SEPARATOR . $destination;
 
         $filesystem = $this->getFilesystem();
